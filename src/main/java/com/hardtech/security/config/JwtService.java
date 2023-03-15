@@ -1,5 +1,6 @@
 package com.hardtech.security.config;
 
+import com.hardtech.security.auth.requests.AuthenticationResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -15,33 +16,49 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import static com.hardtech.security.config.JWTUtils.SECRET_KEY;
+
 @Service
 @RequiredArgsConstructor
 public class JwtService {
-
-    //https://www.allkeysgenerator.com/Random/Security-Encryption-key-generator.aspx
-
-    private static final String SECRET_KEY = "33743677397A24432646294A404E635266546A576E5A7234753778214125442A";
 
     public String extractUserEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public AuthenticationResponse generateTokens(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
 
     //method that will help me to generate a token
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return Jwts
+    public AuthenticationResponse generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+
+
+        String access_token = Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + JWTUtils.EXPIRATION_ACCESS_TOKEN))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
+
+        String refresh_token = Jwts
+                .builder()
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + JWTUtils.EXPIRATION_REFRESH_TOKEN))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .compact();
+
+        return AuthenticationResponse.builder()
+                .access_token(access_token)
+                .refresh_token(refresh_token)
+                .build();
+
+
     }
+
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String userEmail = extractUserEmail(token);
