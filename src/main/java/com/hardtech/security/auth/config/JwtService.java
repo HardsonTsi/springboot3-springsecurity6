@@ -1,4 +1,4 @@
-package com.hardtech.security.config;
+package com.hardtech.security.auth.config;
 
 import com.hardtech.security.auth.requests.AuthenticationResponse;
 import io.jsonwebtoken.Claims;
@@ -16,8 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import static com.hardtech.security.config.JWTUtils.SECRET_KEY;
-
 @Service
 @RequiredArgsConstructor
 public class JwtService {
@@ -33,11 +31,14 @@ public class JwtService {
     //method that will help me to generate a token
     public AuthenticationResponse generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
 
+        Map<String, Object> p = new HashMap<>();
+        p.put("isEnabled", userDetails.isEnabled());
 
         String access_token = Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
+                .addClaims(p)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWTUtils.EXPIRATION_ACCESS_TOKEN))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
@@ -89,7 +90,7 @@ public class JwtService {
     }
 
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(JWTUtils.SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 

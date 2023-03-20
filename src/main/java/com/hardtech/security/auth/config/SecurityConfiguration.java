@@ -1,4 +1,4 @@
-package com.hardtech.security.config;
+package com.hardtech.security.auth.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

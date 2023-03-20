@@ -1,4 +1,4 @@
-package com.hardtech.security.config;
+package com.hardtech.security.auth.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,5 +1,6 @@
-package com.hardtech.security.user;
+package com.hardtech.security.repositories;
 
+import com.hardtech.security.entities.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

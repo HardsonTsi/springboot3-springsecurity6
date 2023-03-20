@@ -1,6 +1,7 @@
-package com.hardtech.security.auth;
+package com.hardtech.security.auth.controllers;
 
 import com.hardtech.security.auth.requests.*;
+import com.hardtech.security.auth.services.AuthencationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
-        AuthenticationResponse response = authencationService.register(request);
+        Boolean response = authencationService.register(request);
         if (Objects.isNull(response))
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Email alraydy used");
         else
@@ -30,8 +31,11 @@ public class AuthenticationController {
         AuthenticationResponse response = authencationService.authenticate(request);
         if (Objects.isNull(response))
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Bad email or password");
-        else
+        else if (response.getAccess_token().equals(response.getRefresh_token()))
+            return ResponseEntity.status(HttpStatus.UPGRADE_REQUIRED).body("Please, confirm your email");
+        else {
             return ResponseEntity.ok().body(response);
+        }
     }
 
     @PutMapping("/password")
@@ -46,6 +50,12 @@ public class AuthenticationController {
     @GetMapping
     public UserResponse profile() {
         return authencationService.profile();
+    }
+
+    @GetMapping("/verify/{token}")
+    public boolean verifyEmail(@PathVariable String token) {
+        authencationService.verifyAccount(token);
+        return true;
     }
 
 }

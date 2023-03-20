@@ -1,7 +1,7 @@
-package com.hardtech.security.auth;
+package com.hardtech.security.auth.services;
 
-import com.hardtech.security.user.User;
-import com.hardtech.security.user.UserRepository;
+import com.hardtech.security.entities.user.User;
+import com.hardtech.security.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;

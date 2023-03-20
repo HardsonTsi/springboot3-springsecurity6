@@ -1,5 +1,6 @@
-package com.hardtech.security.user;
+package com.hardtech.security.entities.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -32,10 +33,13 @@ public class User implements UserDetails {
     @Column(unique = true)
     String email;
 
+    @JsonIgnore
     String password;
 
     @Enumerated(EnumType.STRING)
     List<Role> roles;
+
+    boolean isEnabled;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -73,6 +77,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.isEnabled;
     }
 }

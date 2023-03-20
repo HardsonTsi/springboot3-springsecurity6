@@ -1,4 +1,4 @@
-package com.hardtech.security.config;
+package com.hardtech.security.auth.config;
 
 public class JWTUtils {
     //https://www.allkeysgenerator.com/Random/Security-Encryption-key-generator.aspx
