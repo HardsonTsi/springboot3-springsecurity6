@@ -1,14 +1,21 @@
 package com.hardtech.security.entities.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hardtech.app.entities.Task;
+import com.hardtech.app.entities.Team;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -19,6 +26,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@ToString
+@DynamicInsert
+@DynamicUpdate
 @Entity(name = "user_table")
 public class User implements UserDetails {
     @Id
@@ -36,10 +46,24 @@ public class User implements UserDetails {
     @JsonIgnore
     String password;
 
+    @ElementCollection
     @Enumerated(EnumType.STRING)
     List<Role> roles;
 
     boolean isEnabled;
+
+    @ManyToMany(mappedBy = "members")
+    List<Team> teams = new ArrayList<>();
+
+
+    @ManyToMany(mappedBy = "members")
+    List<Task> tasks = new ArrayList<>();
+
+    @CreationTimestamp
+    LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    LocalDateTime updateAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

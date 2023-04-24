@@ -23,7 +23,6 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Email alraydy used");
         else
             return ResponseEntity.ok().body(response);
-
     }
 
     @PostMapping("/authenticate")
