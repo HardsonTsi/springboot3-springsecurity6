@@ -8,6 +8,7 @@ import com.hardtech.app.entities.Team;
 import com.hardtech.app.exceptions.DuplicateValueException;
 import com.hardtech.app.exceptions.NotFoundException;
 import com.hardtech.app.repositories.ProjectRepository;
+import com.hardtech.app.repositories.TeamRepository;
 import com.hardtech.app.services.team.TeamServicesImpl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 public class ProjectServicesImpl implements ProjectServices {
+    private final TeamRepository teamRepository;
 
     private final ProjectRepository repository;
     private final TeamServicesImpl teamServices;
@@ -91,6 +93,13 @@ public class ProjectServicesImpl implements ProjectServices {
             alraydy.setTeams(teamServices.searchTeamNameLike(id, name));
             return alraydy;
         }
+        return null;
+    }
+
+    @Override
+    public Project deleteAllTeamsByProjectId(Long id) {
+        Project alraydy = findProjectById(id);
+        teamRepository.deleteAll(alraydy.getTeams());
         return null;
     }
 

@@ -25,4 +25,6 @@ public interface ProjectServices {
 
     Project searchTeamNameLike(Long id, String name);
 
+    Project deleteAllTeamsByProjectId(Long id);
+
 }
